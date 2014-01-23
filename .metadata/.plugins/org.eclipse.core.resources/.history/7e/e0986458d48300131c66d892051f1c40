@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources> 
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        <item name="android:background">#ff6600</item>
+    </style>
+</resources>

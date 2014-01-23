@@ -1,0 +1,115 @@
+package com.example.nom;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import com.example.nom.dummy.DummyContent;
+
+/**
+ * A fragment representing a single Item detail screen.
+ * This fragment is either contained in a {@link ItemListActivity}
+ * in two-pane mode (on tablets) or a {@link ItemDetailActivity}
+ * on handsets.
+ */
+public class ItemDetailFragment extends Fragment {
+ 
+    public static final String ARG_ITEM_ID = "item_id";
+    private DummyContent.DummyItem mItem;
+
+    public ItemDetailFragment() {
+    }
+   
+    
+    JSONArray jArray = null;
+    String result = null;
+    StringBuilder sb = null;
+    InputStream is = null;
+    ArrayList<String> nameValuePairs = new ArrayList<String>();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        
+      //http post
+        try{
+             HttpClient httpclient = new DefaultHttpClient();
+
+             //Why to use 10.0.2.2
+             HttpPost httppost = new HttpPost("http://10.0.2.2/folderName/myFile.php");
+             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+             HttpResponse response = httpclient.execute(httppost);
+             HttpEntity entity = response.getEntity();
+             is = entity.getContent();
+             }catch(Exception e){
+                 Log.e("log_tag", "Error in http connection"+e.toString());
+            }
+        //convert response to string
+        try{
+              BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+               sb = new StringBuilder();
+               sb.append(reader.readLine() + "\n");
+
+               String line="0";
+               while ((line = reader.readLine()) != null) {
+                              sb.append(line + "\n");
+                }
+                is.close();
+                result=sb.toString();
+                }catch(Exception e){
+                      Log.e("log_tag", "Error converting result "+e.toString());
+                }
+
+        String name;
+        try{
+              jArray = new JSONArray(result);
+              JSONObject json_data=null;
+              for(int i=0;i<jArray.length();i++){
+                     json_data = jArray.getJSONObject(i);
+                     ct_name=json_data.getString("NAME");//here "Name" is the column name in database
+                 }
+              }
+              catch(JSONException e1){
+               Toast.makeText(getBaseContext(), "No Data Found" ,Toast.LENGTH_LONG).show();
+              } catch (ParseException e1) {
+           e1.printStackTrace();
+         }
+        }
+        
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            // Load the dummy content specified by the fragment
+            // arguments. In a real-world scenario, use a Loader
+            // to load content from a content provider.
+            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_item_detail, container, false);
+
+        // Show the dummy content as text in a TextView.
+        if (mItem != null) {
+            ((TextView) rootView.findViewById(R.id.item_detail)).setText("gello" + mItem.content);
+        }
+
+        return rootView;
+    }
+}
