@@ -1,0 +1,30 @@
+package com.nom;
+
+import android.os.Bundle;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class SplashScreen extends Activity {
+
+    private final int SPLASH_DISPLAY_LENGHT = 3000;            //set your time here......
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash);
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                /* Create an Intent that will start the Menu-Activity. */
+                Intent mainIntent = new Intent(Splash.this,MainActivity.class);
+                Splash.this.startActivity(mainIntent);
+                Splash.this.finish();
+            }
+        }, SPLASH_DISPLAY_LENGHT);
+    }

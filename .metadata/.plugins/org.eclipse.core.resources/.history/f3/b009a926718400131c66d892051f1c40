@@ -1,0 +1,9 @@
+package com.nom;
+
+import java.net.URL;
+
+import android.os.AsyncTask;
+
+public class NetworkConnection extends AsyncTask<URL, Integer, Long> {
+   
+}
